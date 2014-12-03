@@ -23,6 +23,7 @@ class PointSimulation(object):
         self.outcomes = None
         self.endpts = None
         self.bounces = None
+        self.time = None
         self.run = False
         self.enend = ensure_end
         
@@ -37,6 +38,7 @@ class PointSimulation(object):
         p = n.balls.getpos()
         nb = n.balls.bounces
         rp = (p[0],p[1])
+        tm = n.tm
         if self.enend:
             if r == TIMEUP:
                 self.badsims += 1
@@ -44,7 +46,7 @@ class PointSimulation(object):
             if rp[0] < 0 or rp[0] > self.tab.dim[0] or rp[1] < 0 or rp[1] > self.tab.dim[1]:
                 self.badsims += 1
                 return(self.singleSim(i))
-        return [r, rp, nb]
+        return [r, rp, nb, tm]
     
     def runSimulation(self):
         
@@ -53,9 +55,10 @@ class PointSimulation(object):
         self.outcomes = [r[0] for r in ret]
         self.endpts = [r[1] for r in ret]
         self.bounces = [r[2] for r in ret]
+        self.time = [r[3] for r in ret]
         self.run = True
         
-        return [self.outcomes, self.endpts, self.bounces]
+        return [self.outcomes, self.endpts, self.bounces, self.time]
         
     def getOutcomes(self):
         if not self.run: raise Exception('Cannot get simulation outcome without running simulations first')
@@ -76,6 +79,10 @@ class PointSimulation(object):
     def getBounces(self):
         if not self.run: raise Exception('Cannot get simulation outcome without running simulations first')
         return self.bounces
+
+    def getTime(self):
+        if not self.run: raise Exception('Cannot get simulation time without running simulations first')
+        return self.time
     
     def drawdensity(self, rp_wid = 5, greyscale = (0,255), gamadj = .2):
         ptharray = np.zeros(table.dim)
